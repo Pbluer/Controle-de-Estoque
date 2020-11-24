@@ -1,8 +1,4 @@
 {
-    "bebidas":{
-
-    },
-    "comida":{
-        
-    }
+    "bebidas":[],
+    "comida":[]
 }
