@@ -1,5 +1,5 @@
 # Frente de Caixa
-![interface image](https://github.com/Pbluer/Frente-de-Caixa/blob/master/template/web.jpg)
+![interface image](https://github.com/Pbluer/Controle-de-Estoque/blob/main/frontend/public/preview.png)
 
 ----
 ### Tecnologias
