@@ -1,12 +1,7 @@
 <template>
   <v-app id="fundo">
     <v-container id="container">
-      <v-card
-        id="login"
-        class="p-2 d-flex flex-column text-center"
-        width="20vw"
-        dark
-      >
+      <v-card id="login" class="p-2 d-flex flex-column text-center" dark>
         <h1>Login</h1>
         <v-text-field label="Login:" type="text"></v-text-field>
         <v-text-field label="Senha:" type="text"></v-text-field>
