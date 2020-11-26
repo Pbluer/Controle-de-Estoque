@@ -1,13 +1,7 @@
 <template>
   <v-app>
     <v-app-bar app dark>
-      <div class="d-flex align-center">
-        <v-img alt="Vuetify Logo" class="shrink mr-2" contain src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png" transition="scale-transition" width="40"/>
-        <v-img alt="Vuetify Name" class="shrink mt-1 hidden-sm-and-down" contain min-width="100" src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png" width="100"/>
-      </div>
-
       <v-spacer></v-spacer>
-
       <v-btn text @click="dialog = true"> CADASTRO </v-btn>
       <v-btn color="red" :to="'/'"> SAIR </v-btn>
     </v-app-bar>
@@ -15,89 +9,130 @@
     <v-main>
       <div class="text-center">
         <v-dialog v-model="dialog" width="500" dark>
-          <v-card>    
-
+          <v-card>
             <v-divider></v-divider>
-
-            <v-card-text >
-              <v-text-field label="Produto:" type="text" v-model="cadastro.produto" class="mt-5" ></v-text-field>
-              <v-text-field label="Descrição:" type="text"  v-model="cadastro.descricao" ></v-text-field>
+            <v-card-text>
+              <v-text-field
+                label="Produto:"
+                type="text"
+                v-model="cadastro.produto"
+                class="mt-5"
+              ></v-text-field>
+              <v-text-field
+                label="Descrição:"
+                type="text"
+                v-model="cadastro.descricao"
+              ></v-text-field>
               <v-row>
-                 <v-spacer></v-spacer>
-                 <v-text-field label="Preço:" style="width:100px" type="number" v-model="cadastro.preco" ></v-text-field>
-                 <v-spacer></v-spacer>
-                <v-text-field label="Peso:" style="width:100px" type="number" v-model="cadastro.peso" ></v-text-field>
-                 <v-spacer></v-spacer>
-                <v-text-field label="Entrada:" style="width:100px" type="date" v-model="cadastro.entrada" ></v-text-field>
-                 <v-spacer></v-spacer>
+                <v-text-field
+                  label="Preço:"
+                  style="width: 60px"
+                  type="number"
+                  v-model="cadastro.preco"
+                ></v-text-field>
+                <v-spacer></v-spacer>
+                <v-text-field
+                  label="Peso:"
+                  style="width: 60px"
+                  type="number"
+                  v-model="cadastro.peso"
+                ></v-text-field>
+                <v-spacer></v-spacer>
+                <v-text-field
+                  label="Entrada:"
+                  style="width: 60px"
+                  type="date"
+                  v-model="cadastro.entrada"
+                ></v-text-field>
+                <v-spacer></v-spacer>
+                <v-select
+                  style="width: 60px"
+                  v-model="select"
+                  :items="items"
+                  :rules="[(v) => !!v || 'Item is required']"
+                  label="Item"
+                  required
+                ></v-select>
               </v-row>
             </v-card-text>
-
             <v-divider></v-divider>
-
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn dark @click="finalizarCadastro()" color="blue" > FINALIZAR </v-btn>
+              <v-btn dark @click="finalizarCadastro(select)" color="blue">
+                FINALIZAR
+              </v-btn>
             </v-card-actions>
-
           </v-card>
         </v-dialog>
-      </div> 
+      </div>
       <div class="d-sm-flex flex-comlumn">
         <v-container>
           <h1 class="ml-3">Comida</h1>
-          <Tabela :comida="comida" @delet="excluirProduto(value)" />
+          <TabelaComida :comida="comida" @delet="excluirProduto(value)" />
         </v-container>
         <v-spacer></v-spacer>
         <v-container>
-           <h1 class="ml-3">Bebida</h1>
-          <Tabela :bebida="bebida"/>
+          <h1 class="ml-3">Bebida</h1>
+          <TabelaBebida :bebida="bebida" @delet="excluirProduto(value)" />
         </v-container>
       </div>
     </v-main>
   </v-app>
 </template>
 <script>
-
-import Axios from "axios"
-import Tabela from "@/components/Tabela"
-import Produto from "@/models/Produto.js"
+import Axios from "axios";
+import TabelaComida from "@/components/TabelaComida";
+import TabelaBebida from "@/components/TabelaBebida";
+import Produto from "@/models/Produto.js";
 
 export default {
-  components: {    
-    Tabela
+  components: {
+    TabelaComida,
+    TabelaBebida,
   },
-  async created(){    
-    try{
-      this.comida = await this.getTabela()
-    }catch(error){
-      console.log(error)
-    }    
+  async created() {
+    try {
+      this.comida = await this.getTabela("comida");
+      this.bebida = await this.getTabela("bebida");
+    } catch (error) {
+      console.log(error);
+    }
   },
-  async updated(){
-    this.comida = await this.getTabela()
+  async updated() {
+    //this.comida = await this.getTabela("comida");
+    //this.bebida = await this.getTabela("bebida");
   },
-  data(){    
-      return({
-        dialog:false,
-        cadastro: new Produto(),
-        bebida:[],
-        comida:[]
-      })   
+  data() {
+    return {
+      dialog: false,
+      cadastro: new Produto(),
+      bebida: [],
+      comida: [],
+      select: null,
+      items: ["Comida", "Bebida"],
+    };
   },
-  methods:{
-    async getTabela(){        
-      const { data } = await Axios.get("http://localhost:3000/comida")
+  methods: {
+    async getTabela(option) {
+      const { data } = await Axios.get("http://localhost:3000/" + option).catch(
+        (err) => {
+          console.log(err);
+        }
+      );
       return data;
     },
-    async finalizarCadastro(){
+    async finalizarCadastro(option) {
       this.dialog = false;
-      Axios.post("http://localhost:3000/comida/",this.cadastro)
-      this.cadastro = new Produto()           
+      Axios.post("http://localhost:3000/" + option + "/", this.cadastro);
+      this.$forceUpdate();
+      this.cadastro = new Produto();
     },
-    excluirProduto(value){
-      this.comida.splice(value,1)
+    excluirProduto(value) {
+      if (this.select == "Comida") {
+        this.comida.splice(value, 1);
+      }
+      this.bebida.splice(value, 1);
     },
-  }
-}
+  },
+};
 </script>
