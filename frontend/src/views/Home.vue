@@ -3,8 +3,8 @@
     <v-app-bar app dark>
       <h1>Estoque</h1>
       <v-spacer></v-spacer>
-      <v-btn text @click="dialog = true"> CADASTRO </v-btn>
-      <v-btn color="red" :to="'/'"> SAIR </v-btn>
+      <v-btn color="blue" @click="dialog = true"> CADASTRO </v-btn>
+      <v-btn class="ml-5" color="red" :to="'/'"> SAIR </v-btn>
     </v-app-bar>
 
     <v-main>
@@ -18,7 +18,7 @@
               <v-text-field label="Preço:"  type="number" v-model="cadastro.preco" ></v-text-field>
               <v-text-field label="Peso:"  type="number" v-model="cadastro.peso" ></v-text-field>
               <v-text-field label="Entrada:"  type="date" v-model="cadastro.entrada" ></v-text-field>
-              <v-select  v-model="select" :items="items" :rules="[v => !!v || 'Item is required']" label="Item" required></v-select>
+              <v-select  v-model="select" :items="items" label="Item" required></v-select>
             </v-card-text>
             <v-divider></v-divider>
             <v-card-actions>
@@ -31,12 +31,12 @@
       <div class="d-sm-flex flex-comlumn">
         <v-container>
           <h1 class="ml-3">Comida</h1>
-          <TabelaComida :comida="comida" @delet="excluirProduto(value)" />
+          <TabelaComida :comida="comida" @delet="excluirComida(value)" />
         </v-container>
         <v-spacer></v-spacer>
         <v-container>
            <h1 class="ml-3">Bebida</h1>
-          <TabelaBebida :bebida="bebida"  @delet="excluirProduto(value)" />
+          <TabelaBebida :bebida="bebida" @delet="excluirBebida(value)" />
         </v-container>
       </div>
     </v-main>
@@ -62,10 +62,6 @@ export default {
       console.log(error)
     }    
   },
-  async updated(){
-    //this.comida = await this.getTabela("comida");
-    //this.bebida = await this.getTabela("bebida");
-  },
   data(){    
       return({
         dialog:false,
@@ -87,14 +83,14 @@ export default {
     async finalizarCadastro(option){
       this.dialog = false;
       Axios.post("http://localhost:3000/"+ option +"/",this.cadastro)
-      this.$forceUpdate()
-      this.cadastro = new Produto()           
+      this.select == "Comida" ? this.comida.push(this.cadastro) : this.bebida.push(this.cadastro)
+      this.cadastro = new Produto()
     },
-    excluirProduto(value){
-      if(this.select == "Comida"){
-        this.comida.splice(value,1)
-      }
-        this.bebida.splice(value,1)
+    excluirComida(value){      
+      this.comida.splice(value,1)
+    },
+    excluirBebida(value){      
+      this.bebida.splice(value,1)
     },
   }
 }

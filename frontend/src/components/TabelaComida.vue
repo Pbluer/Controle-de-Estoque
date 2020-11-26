@@ -35,6 +35,7 @@ export default {
   props: ["comida"],
   methods: {
     excluirProduto(value) {
+      console.log("Tabela: "+value)
       Axios.delete("http://localhost:3000/comida/" + value);
       this.$emit("delet", value);
     },
